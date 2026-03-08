@@ -1,0 +1,5 @@
+start bash (git-bash.exe)
+type in: php websocket/server.php
+to start
+
+use CTRL-C to stop
