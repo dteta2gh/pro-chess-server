@@ -1,27 +1,79 @@
 <?php
 
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+$data = json_decode(file_get_contents("php://input"), true);
 
-require "../vendor/autoload.php";
-
-use ChessServer\Stockfish;
-
-header('Content-Type: application/json');
-
-$fen = $_POST['fen'] ?? null;
+$fen = $data['fen'] ?? null;
+$elo = $data['elo'] ?? 1200;
 
 if(!$fen){
-    echo json_encode([
-        "error" => "No FEN provided"
-    ]);
-    exit;
+
+echo json_encode(["move"=>null]);
+exit;
+
 }
 
-$engine = new Stockfish();
+$engine="C:/xampp/htdocs/pro-chess-server/stockfish/stockfish.exe";
 
-$move = $engine->bestMove($fen);
+$descriptorspec = [
+
+0 => ["pipe","r"],
+1 => ["pipe","w"]
+
+];
+
+$process = proc_open($engine,$descriptorspec,$pipes);
+
+fwrite($pipes[0],"uci\n");
+
+fwrite($pipes[0],"setoption name UCI_LimitStrength value true\n");
+fwrite($pipes[0],"setoption name UCI_Elo value $elo\n");
+
+fwrite($pipes[0],"position fen $fen\n");
+
+fwrite($pipes[0],"go movetime 1000\n");
+
+$eval = 0;
+$move = null;
+
+while ($line = fgets($pipes[1])) {
+
+    // capture evaluation
+    if (strpos($line, "score cp") !== false) {
+
+        preg_match('/score cp (-?\d+)/', $line, $m);
+
+        if(isset($m[1])){
+            $eval = intval($m[1]);
+        }
+
+    }
+
+    // capture mate scores
+    if (strpos($line, "score mate") !== false) {
+
+        preg_match('/score mate (-?\d+)/', $line, $m);
+
+        if(isset($m[1])){
+            $eval = $m[1] * 1000;
+        }
+
+    }
+
+    // capture best move
+    if (strpos($line, "bestmove") !== false) {
+
+        $parts = explode(" ", $line);
+
+        $move = trim($parts[1]);
+
+        break;
+    }
+}
+
+
+proc_close($process);
 
 echo json_encode([
-    "move" => $move
+"move"=>$move,
+"eval" => $eval
 ]);
