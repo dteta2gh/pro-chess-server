@@ -1,0 +1,17 @@
++---api
++---classes
++---config
++---public
+|   +---assets
+|   |   +---css
+|   |   +---js
+|   |   \---vendor
+|   +---css
+|   +---img
+|   |   \---chesspieces
+|   |       \---wikipedia
+|   \---js
++---sql
++---stockfish
++---vendor
+\---websocket
