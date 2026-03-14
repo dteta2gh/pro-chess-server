@@ -1,52 +1,61 @@
-var whiteTime=600
-var blackTime=600
+var whiteTime = 600
+var blackTime = 600
+var clockInterval = null
 
 function initClock(){
 
-updateClocks()
+    if(clockInterval) return
 
-setInterval(clockTick,1000)
+    clockInterval = setInterval(clockTick, 1000)
+}
 
+function startClock(){
+    clockRunning = true
+}
+
+function stopClock(){
+    clockRunning = false
 }
 
 function clockTick(){
 
-if(game.game_over()) return
+    if(!clockRunning) return
+    if(game.game_over()) return
 
-if(game.turn()=="w")
-whiteTime--
-else
-blackTime--
+    if(game.turn() == "w"){
+        whiteTime--
+    }else{
+        blackTime--
+    }
 
-if(whiteTime<=0){
-alert("Black wins on time")
-newGame()
-}
+    if(whiteTime <= 0){
+        stopClock()
+        document.getElementById("status").innerText = "Black wins on time"
+        document.getElementById("status").className = "status-mate"
+        return
+    }
 
-if(blackTime<=0){
-alert("White wins on time")
-newGame()
-}
+    if(blackTime <= 0){
+        stopClock()
+        document.getElementById("status").innerText = "White wins on time"
+        document.getElementById("status").className = "status-mate"
+        return
+    }
 
-updateClocks()
-
+    updateClocks()
 }
 
 function updateClocks(){
-
-document.getElementById("white-clock").innerHTML=formatTime(whiteTime)
-
-document.getElementById("black-clock").innerHTML=formatTime(blackTime)
-
+    document.getElementById("white-clock").innerHTML = formatTime(whiteTime)
+    document.getElementById("black-clock").innerHTML = formatTime(blackTime)
 }
 
 function formatTime(t){
 
-let m=Math.floor(t/60)
-let s=t%60
+    var m = Math.floor(t / 60)
+    var s = t % 60
 
-if(s<10) s="0"+s
+    if(s < 10) s = "0" + s
 
-return m+":"+s
-
+    return m + ":" + s
 }

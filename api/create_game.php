@@ -1,10 +1,22 @@
 <?php
+
 require "../config/db.php";
 
-$white=$_POST['white'];
-$black=$_POST['black'];
+header('Content-Type: application/json');
 
-$stmt=$pdo->prepare("INSERT INTO games(white_player,black_player,status) VALUES(?,?,?)");
-$stmt->execute([$white,$black,'active']);
+$white = $_POST['white_player'] ?? 1;
+$black = $_POST['black_player'] ?? 0;
+$fen   = $_POST['fen'] ?? '';
+$pgn   = $_POST['pgn'] ?? '';
+$status = $_POST['status'] ?? 'active';
 
-echo json_encode(["game_id"=>$pdo->lastInsertId()]);
+$stmt = $pdo->prepare("
+    INSERT INTO games (white_player, black_player, fen, pgn, status)
+    VALUES (?, ?, ?, ?, ?)
+");
+
+$stmt->execute([$white, $black, $fen, $pgn, $status]);
+
+echo json_encode([
+    "game_id" => $pdo->lastInsertId()
+]);

@@ -9,6 +9,11 @@ score = Math.max(-MAX, Math.min(MAX, score))
 
 evalHistory.push(score)
 
+// limit history size
+if(evalHistory.length > 200){
+evalHistory.shift()
+}
+
 drawEvalGraph()
 
 }

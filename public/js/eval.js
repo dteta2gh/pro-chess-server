@@ -1,28 +1,28 @@
 function updateEval(score){
 
-const MAX = 1000
+    const MAX = 1000
 
-if(score > MAX) score = MAX
-if(score < -MAX) score = -MAX
+    // convert to White's perspective for display
+    let displayScore = score
+    if(game && game.turn && game.turn() === 'b'){
+        displayScore = -displayScore
+    }
 
-let percent = 50 + (score / MAX) * 50
+    if(displayScore > MAX) displayScore = MAX
+    if(displayScore < -MAX) displayScore = -MAX
 
-if(board && board.orientation && board.orientation() === "black"){
-percent = 100 - percent
-}
+    let percent = 50 + (displayScore / MAX) * 50
 
-// get elements safely
-let bar = document.getElementById("eval-bar")
-let scoreText = document.getElementById("eval-score")
+    let fill = document.getElementById("eval-fill")
+    let scoreText = document.getElementById("eval-score")
 
-// update bar if it exists
-if(bar){
-bar.style.height = percent + "%"
-}
+    if(fill){
+        fill.style.height = percent + "%"
+    }
 
-// update numeric score if it exists
-if(scoreText){
-scoreText.innerText = (score/100).toFixed(2)
-}
-
+    if(scoreText){
+        let text = (displayScore / 100).toFixed(2)
+        if(displayScore > 0) text = "+" + text
+        scoreText.innerText = text
+    }
 }

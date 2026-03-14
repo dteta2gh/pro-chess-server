@@ -14,32 +14,45 @@ onSnapEnd: onSnapEnd
 
 function onDragStart(source,piece){
 
-if(game.game_over()) return false
+    if(!gameStarted) return false
 
-if(piece.search(/^b/) !== -1) return false
+    if(game.game_over()) return false
 
+    if(playerSide === 'w' && piece.search(/^b/) !== -1) return false
+    if(playerSide === 'b' && piece.search(/^w/) !== -1) return false
+
+    if(game.turn() !== playerSide) return false
 }
 
 function onDrop(source,target){
 
-removeHighlights()
+    clearArrows()
 
-let move = game.move({
-from:source,
-to:target,
-promotion:'q'
-})
+    let move = game.move({
+        from:source,
+        to:target,
+        promotion:'q'
+    })
 
-if(!move) return 'snapback'
+    if(!move) return 'snapback'
 
-highlightLastMove(move)
+    removeHighlights()
+    highlightLastMove(move)
 
-board.position(game.fen())
+    board.position(game.fen())
+    updateMoveHistory()
+    updateTurnStatus()
+	
+	saveMoveRecord(move.san)
+	updateGameRecord()
 
-updateMoveHistory()
+    if(checkGameEnd()) return
 
-setTimeout(playStockfish,300)
+    evaluatePosition(playerSide)
 
+    if(autoStockfish){
+        setTimeout(playStockfish,300)
+    }
 }
 
 function onSnapEnd(){

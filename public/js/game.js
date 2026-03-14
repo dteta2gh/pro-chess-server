@@ -1,15 +1,21 @@
 var board
 var game = new Chess()
 
+var currentGameId = null
+var playerSide = 'w'
+var gameStarted = false
+var autoStockfish = true
+var clockRunning = false
+
 function initGame(){
 
-initBoard()
+    initBoard()
 
-initClock()
+    updateMoveHistory()
 
-updateMoveHistory()
-
-updateClocks()
+    updateClocks()
+	
+	loadGameList()
 
 }
 

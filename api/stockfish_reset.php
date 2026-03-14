@@ -1,12 +1,7 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
 
-require_once '../classes/Stockfish.php';
+header('Content-Type: application/json');
 
-$engine = new Stockfish();
-
-$engine->send("stop");
-$engine->send("ucinewgame");
-
-echo json_encode(["status"=>"ok"]);
+echo json_encode([
+    "status" => "engine_reset"
+]);
