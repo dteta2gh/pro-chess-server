@@ -8,7 +8,7 @@
 <link rel="stylesheet"
 href="https://cdn.jsdelivr.net/npm/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css"/>
 
-<link rel="stylesheet" href="css/game.css">
+<link rel="stylesheet" href="css/play.css">
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
@@ -45,6 +45,23 @@ href="https://cdn.jsdelivr.net/npm/@chrisoakman/chessboardjs@1.0.0/dist/chessboa
 <h2>Pro Chess Server v2</h2>
 
 <div id="controls">
+
+<label for="timeControl">Time:</label>
+<select id="timeControl">
+    <option value="300">5:00</option>
+    <option value="600" selected>10:00</option>
+    <option value="900">15:00</option>
+    <option value="1800">30:00</option>
+</select>
+
+<label for="incrementControl">Increment:</label>
+<select id="incrementControl">
+    <option value="0" selected>+0</option>
+    <option value="1">+1</option>
+    <option value="2">+2</option>
+    <option value="5">+5</option>
+    <option value="10">+10</option>
+</select>
 
 <button onclick="beginGame()">Begin Game</button>
 
@@ -84,10 +101,7 @@ Engine Level:
 <h3>Saved Games</h3>
 
 <select id="game-list"></select>
-
-<button onclick="loadSelectedGame()">Load Game</button>
-<button onclick="nextReplayMove()">Next Move</button>
-<button onclick="resetReplay()">Reset</button>
+<button onclick="loadSelectedGame()">Replay Game</button>
 
 <div id="game-layout">
 

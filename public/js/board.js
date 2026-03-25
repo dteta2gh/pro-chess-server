@@ -40,11 +40,16 @@ function onDrop(source,target){
     highlightLastMove(move)
 
     board.position(game.fen())
+
+    // ✅ APPLY INCREMENT HERE
+    let sideJustMoved = (game.turn() === 'w') ? 'b' : 'w';
+    applyIncrement(sideJustMoved);
+
     updateMoveHistory()
     updateTurnStatus()
 	
-	saveMoveRecord(move.san)
-	updateGameRecord()
+    saveMoveRecord(move.san)
+    updateGameRecord()
 
     if(checkGameEnd()) return
 

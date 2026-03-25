@@ -1,6 +1,13 @@
 function updateMoveHistory(){
 
-    var history = game.history()
+    var history = []
+
+    if(typeof replayMode !== "undefined" && replayMode && replayMoves.length){
+        history = replayMoves.map(m => m.move ? m.move : m)
+    }else{
+        history = game.history()
+    }
+
     var html = ""
 
     for(var i = 0; i < history.length; i += 2){
@@ -9,8 +16,8 @@ function updateMoveHistory(){
         let whiteMove = history[i] || ""
         let blackMove = history[i + 1] || ""
 
-        let whiteQuality = moveQualities[i] || ""
-        let blackQuality = moveQualities[i + 1] || ""
+        let whiteQuality = (typeof moveQualities !== "undefined" && moveQualities[i]) ? moveQualities[i] : ""
+        let blackQuality = (typeof moveQualities !== "undefined" && moveQualities[i + 1]) ? moveQualities[i + 1] : ""
 
         html += `
             <div class="move-row">
@@ -49,4 +56,66 @@ let last = moves[moves.length-1]
 
 last.innerHTML += " <span class='move-quality'>"+label+"</span>"
 
+}
+
+async function loadGameList(selectedGameId = null) {
+    try {
+        const response = await fetch('../api/get_games.php');
+        if (!response.ok) {
+            throw new Error('HTTP ' + response.status);
+        }
+
+        const games = await response.json();
+        const select = document.getElementById("game-list");
+
+        if (!select) return;
+
+        select.innerHTML = "";
+
+        if (!games.length) {
+            const option = document.createElement("option");
+            option.value = "";
+            option.text = "No saved games";
+            option.disabled = true;
+            option.selected = true;
+            select.appendChild(option);
+            return;
+        }
+
+        games.forEach(g => {
+            const option = document.createElement("option");
+            option.value = g.id;
+            option.text = "Game " + g.id;
+
+            if (selectedGameId && String(g.id) === String(selectedGameId)) {
+                option.selected = true;
+            }
+
+            select.appendChild(option);
+        });
+    } catch (error) {
+        console.error("Failed to load game list:", error);
+
+        const select = document.getElementById("game-list");
+        if (!select) return;
+
+        select.innerHTML = "";
+        const option = document.createElement("option");
+        option.value = "";
+        option.text = "Failed to load games";
+        option.disabled = true;
+        option.selected = true;
+        select.appendChild(option);
+    }
+}
+
+function loadSelectedGame() {
+    const select = document.getElementById("game-list");
+
+    if (!select || !select.value) {
+        return;
+    }
+
+    const gameId = select.value;
+    window.location.href = 'replay.php?game_id=' + encodeURIComponent(gameId);
 }

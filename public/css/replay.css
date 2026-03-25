@@ -1,0 +1,81 @@
+/* =========================
+   REPLAY PAGE
+========================= */
+
+body.replay-page #controls {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 10px;
+}
+
+body.replay-page #controls button {
+    white-space: nowrap;
+}
+
+body.replay-page #moves {
+    display: flex;
+    flex-direction: column;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+body.replay-page #move-history {
+    margin-top: 10px;
+}
+
+/* stronger replay highlight */
+body.replay-page .move-cell.active-move {
+    background: #ffd54f;
+    font-weight: bold;
+}
+
+/* replay move quality colors */
+body.replay-page .q-best {
+    color: #2ecc71;
+    font-weight: bold;
+}
+
+body.replay-page .q-excellent {
+    color: #27ae60;
+}
+
+body.replay-page .q-good {
+    color: #2980b9;
+}
+
+body.replay-page .q-inaccuracy {
+    color: #f39c12;
+}
+
+body.replay-page .q-mistake {
+    color: #e67e22;
+}
+
+body.replay-page .q-blunder {
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+/* replay eval layout */
+body.replay-page #eval-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+body.replay-page #eval-score {
+    order: -1;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+body.replay-page #eval-bar {
+    width: 40px;
+    height: 360px;
+}
+
+body.replay-page #eval-graph {
+    width: 100%;
+    height: 120px;
+    margin-top: 12px;
+}

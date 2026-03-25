@@ -1,4 +1,11 @@
 function newGame(){
+	
+	if(typeof replayMode !== "undefined"){
+		replayMode = false
+		replayMoves = []
+		replayIndex = 0
+		replayGameId = null
+	}
 
     stopClock()
 
@@ -6,8 +13,10 @@ function newGame(){
 
     board.start()
 
-    whiteTime = 600
-    blackTime = 600
+    //whiteTime = 600 --- ewmove to add modifiable times
+    //blackTime = 600
+	whiteTime = window.gameInitialTime || 600;
+	blackTime = window.gameInitialTime || 600;
 
     updateMoveHistory()
     updateClocks()
@@ -133,6 +142,15 @@ function updateTurnStatus(){
 async function beginGame(){
 
     playerSide = document.getElementById("playerSide").value
+	
+	let selectedInitialTime = parseInt(document.getElementById("timeControl").value, 10);
+	let selectedIncrement = parseInt(document.getElementById("incrementControl").value, 10);
+
+	whiteTime = selectedInitialTime;
+	blackTime = selectedInitialTime;
+
+	window.gameInitialTime = selectedInitialTime;
+	window.gameIncrement = selectedIncrement;
 
     newGame()
 
@@ -183,11 +201,13 @@ async function createGameRecord(){
             'Content-Type': 'application/x-www-form-urlencoded'
         },
         body:
-            'white_player=' + encodeURIComponent(whitePlayer) +
-            '&black_player=' + encodeURIComponent(blackPlayer) +
-            '&fen=' + encodeURIComponent(game.fen()) +
-            '&pgn=' + encodeURIComponent(game.pgn()) +
-            '&status=' + encodeURIComponent('active')
+			'white_player=' + encodeURIComponent(whitePlayer) +
+			'&black_player=' + encodeURIComponent(blackPlayer) +
+			'&fen=' + encodeURIComponent(game.fen()) +
+			'&pgn=' + encodeURIComponent(game.pgn()) +
+			'&status=' + encodeURIComponent('active') +
+			'&initial_time=' + encodeURIComponent(window.gameInitialTime || 600) +
+			'&increment_seconds=' + encodeURIComponent(window.gameIncrement || 0)
     })
 
     const data = await response.json()
@@ -201,9 +221,8 @@ async function createGameRecord(){
     }
 }
 
-async function saveMoveRecord(moveText){
-
-    if(!currentGameId) return
+async function saveMoveRecord(moveText, evalScore = null, quality = null) {
+    if (!currentGameId) return;
 
     const response = await fetch('../api/save_move.php', {
         method: 'POST',
@@ -213,12 +232,16 @@ async function saveMoveRecord(moveText){
         body:
             'game_id=' + encodeURIComponent(currentGameId) +
             '&move=' + encodeURIComponent(moveText) +
-            '&fen=' + encodeURIComponent(game.fen())
-    })
+            '&fen=' + encodeURIComponent(game.fen()) +
+            '&eval=' + encodeURIComponent(evalScore ?? '') +
+            '&quality=' + encodeURIComponent(quality ?? '') +
+            '&white_time=' + encodeURIComponent(whiteTime ?? '') +
+            '&black_time=' + encodeURIComponent(blackTime ?? '')
+    });
 
-    const data = await response.json()
+    const data = await response.json();
 
-    console.log("Saved move:", data)
+    console.log("Saved move:", data);
 }
 
 async function updateGameRecord(){
@@ -242,4 +265,22 @@ async function updateGameRecord(){
     const data = await response.json()
 
     console.log("Updated game:", data)
+}
+
+async function updateLastMoveAnalysis(evalScore, quality) {
+    if (!currentGameId) return;
+
+    const response = await fetch('../api/update_last_move_analysis.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body:
+            'game_id=' + encodeURIComponent(currentGameId) +
+            '&eval=' + encodeURIComponent(evalScore ?? '') +
+            '&quality=' + encodeURIComponent(quality ?? '')
+    });
+
+    const data = await response.json();
+    console.log("Updated move analysis:", data);
 }

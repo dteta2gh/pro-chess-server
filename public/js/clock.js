@@ -59,3 +59,15 @@ function formatTime(t){
 
     return m + ":" + s
 }
+
+function applyIncrement(sideJustMoved) {
+    let inc = window.gameIncrement || 0;
+
+    if (!inc) return;
+
+    if (sideJustMoved === 'w') {
+        whiteTime += inc;
+    } else {
+        blackTime += inc;
+    }
+}
