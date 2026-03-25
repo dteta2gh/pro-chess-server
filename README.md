@@ -7,4 +7,6 @@ composer -> https://getcomposer.org/
 
 use composer.json to install the vendor folder and contents.
 
-run get-bash,exe and type: php websocket/server.php to start the server
+run get-bash.exe and type: php websocket/server.php to start the server
+
+
